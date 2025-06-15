@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkillSwap - Register</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Create Your Account</h2>
+    <form id="registerForm">
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <textarea id="skills" placeholder="Skills you can teach (comma separated)" required></textarea>
+      <textarea id="learning" placeholder="Skills you want to learn (comma separated)" required></textarea>
+      <button type="submit">Register</button>
+      <p>Already have an account? <a href="login.html">Login here</a></p>
+    </form>
+  </div>
+
+  <script src="js/auth.js">
+    // Handle Registration
+if (document.getElementById('registerForm')) {
+  document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const skills = document.getElementById('skills').value;
+    const learning = document.getElementById('learning').value;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    const alreadyExists = users.some(user => user.email === email);
+    if (alreadyExists) {
+      alert("Email already registered. Please login.");
+      return;
+    }
+
+    const newUser = {
+      name,
+      email,
+      password,
+      skills: skills.split(',').map(s => s.trim()),
+      learning: learning.split(',').map(s => s.trim())
+    };
+
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
+    alert("Registration successful! You can now login.");
+    window.location.href = "login.html";
+  });
+}
+
+// Handle Login
+if (document.getElementById('loginForm')) {
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const user = users.find(u => u.email === email && u.password === password);
+
+    if (user) {
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      localStorage.setItem("isLoggedIn", "true");
+      alert("Login successful!");
+      window.location.href = "dashboard.html";
+    } else {
+      alert("Invalid credentials.");
+    }
+  });
+}
+
+  </script>
+</body>
+</html>
